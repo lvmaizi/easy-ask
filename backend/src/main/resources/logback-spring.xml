@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="60 seconds" debug="true">
+
+    <!-- 动态日志级别 -->
+    <jmxConfigurator/>
+
+    <!-- 定义日志文件 输出位置 -->
+    <property name="app_name" value="${HOSTNAME}"/>
+    <property name="head_name" value="ss_micro_app"/>
+    <property name="log_pattern" value="%d [%thread] %-5p [%c] [%F:%L] [trace=%mdc{trace_id},span=%mdc{span_id},parent=%X{X-B3-ParentSpanId:-},tid=] - %.-20480msg%n"/>
+    <property name="log_dir" value="./log/"/>
+
+
+    <!-- 日志最大的历史 30天 -->
+    <property name="log.maxHistory" value="3"/>
+    <property name="log.maxSize" value="5MB"/>
+
+
+    <!-- ConsoleAppender 控制台输出日志 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log_dir}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>${log.maxHistory}</maxHistory>
+            <MaxFileSize>${log.maxSize}</MaxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                <pattern>${log_pattern}</pattern>
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- INFO级别日志 appender -->
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log_dir}/info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>${log.maxHistory}</maxHistory>
+            <MaxFileSize>${log.maxSize}</MaxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="com.lvmaizi" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="INFO"/>
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+</configuration>

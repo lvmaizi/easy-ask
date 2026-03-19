@@ -1,0 +1,187 @@
+.chat-layout {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 4px;
+  font-family: AlibabaPuHuiTi, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  background: #ffffff;
+  position: relative;
+}
+
+.settings-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.65);
+  transition: all 0.3s;
+  z-index: 1000;
+}
+
+.settings-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.chat-layout.dark .settings-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.chat-layout.dark .settings-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 768px) {
+  .settings-button {
+    top: 12px;
+    right: auto;
+    left: 12px;
+  }
+}
+
+.chat-layout.dark {
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  background: #212121;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.chat-layout.light {
+  --shadow-color: rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.chat-layout .ant-prompts {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.chat-layout.dark .ant-prompts {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.chat-chat {
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 16px;
+  background: #ffffff;
+  overflow-y: auto;
+}
+
+.chat-layout.dark .chat-chat {
+  background: #212121;
+}
+
+.messages {
+  flex: 1;
+}
+
+.messages .ant-bubble {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.chat-chat.empty {
+  justify-content: center;
+}
+
+.placeholder {
+  padding-top: 32px;
+}
+
+.sender {
+  position: sticky;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  bottom: 0;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  background-color: #f3f4f6;
+  z-index: 10;
+}
+
+.chat-chat .footer {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  padding: 0px 0 0px 0;
+  position: sticky;
+  bottom: 0;
+  background: #ffffff;
+  z-index: 10;
+}
+
+.chat-chat.empty .messages {
+  flex: initial;
+  overflow-y: initial;
+}
+
+.chat-chat.empty {
+  margin-top: 20px;
+}
+
+.chat-layout.dark .ant-welcome {
+  background-color: #212121;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.chat-layout.dark .ant-bubble {
+  background-color: #212121;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.chat-layout.dark .ant-sender {
+  background-color: #303030;
+}
+
+.chat-layout.dark .ant-sender-input {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.chat-layout.dark .chat-chat .footer {
+  color: rgba(255, 255, 255, 0.45);
+  background: #212121;
+}
+
+.x-markdown blockquote {
+  border-left: 4px solid #9cbcea;
+  padding: 6px 12px;
+  margin: 1px 0;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 0 6px 6px 0;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.chat-layout.dark .x-markdown blockquote {
+  border-left-color: #a4c2ec;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.x-markdown blockquote p {
+  margin: 0;
+}
+
+.x-markdown blockquote p:last-child {
+  margin-bottom: 0;
+}
