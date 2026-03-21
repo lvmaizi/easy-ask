@@ -12,6 +12,7 @@ import "./Chat.css";
 import { XMarkdown, type ComponentProps } from "@ant-design/x-markdown";
 import { Layout, type GetProp, Space } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import hljs from "highlight.js";
 
@@ -79,6 +80,7 @@ const roles: GetProp<typeof Bubble.List, "roles"> = {
 };
 
 const Chat: React.FC = () => {
+  const navigate = useNavigate();
   const { create } = XRequest({
     baseURL: `/api/v1/assistant/chat/create`
   });
@@ -166,7 +168,7 @@ const Chat: React.FC = () => {
   return (
     <Layout className={`chat-layout`}>
       {messages.length === 0 && (
-        <button className="settings-button" onClick={() => console.log('Settings clicked')}>
+        <button className="settings-button" onClick={() => navigate('/setting')}>
           <SettingOutlined />
         </button>
       )}

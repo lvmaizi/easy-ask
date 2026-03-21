@@ -1,0 +1,12 @@
+jpackage \
+  --name easy-ask \
+  --input target/ \
+  --main-jar easy-ask.jar \
+  --app-version 1.0.0 \
+  --main-class org.springframework.boot.loader.launch.JarLauncher \
+  --type pkg \
+  --vendor "LvMaizi" \
+  --description "Easy Ask Application" \
+  --java-options "-Xmx512m" \
+  --java-options "-Dfile.encoding=UTF-8" \
+  --java-options "-DbasePath=$HOME/easy-ask"

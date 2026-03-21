@@ -102,4 +102,18 @@ public class AgentFactory {
             extractionAgentMap.remove(extractionAgentMap.keySet().iterator().next());
         }
     }
+
+    private final static String SUMMARY_PROMPT = """
+            
+            # 你是一个知识萃取助理，你的职责是根据用户提供的文件内容提取该文件的概要描述
+            
+            """;
+
+    public SummaryAgent getSummaryAgent() {
+        ChatClient chatClient = ChatClient.builder(chatModel)
+                .defaultSystem(p -> p.text(SUMMARY_PROMPT))
+                .build();
+
+        return new SummaryAgent(chatClient);
+    }
 }

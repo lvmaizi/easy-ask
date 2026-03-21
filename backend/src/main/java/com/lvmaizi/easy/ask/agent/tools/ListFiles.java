@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lvmaizi.easy.ask.repository.MybatisMappers;
 import com.lvmaizi.easy.ask.repository.entity.FileEntity;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +43,7 @@ public class ListFiles {
 
         // 在 Java 中处理列表
         String fileListText = files.stream()
-                .map(file -> "- " + file.getName() + ": " + file.getPath())
+                .map(file -> "- " + file.getName() + ": " + file.getPath() + "\n该文件摘要为：" + StringUtils.defaultString(file.getSummary()))
                 .collect(Collectors.joining("\n"));
 
         Map<String, Object> model = new HashMap<>();

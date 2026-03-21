@@ -21,4 +21,6 @@ public class FileEntity extends BaseEntity {
 
     private Long length;
 
+    private String summary;
+
 }

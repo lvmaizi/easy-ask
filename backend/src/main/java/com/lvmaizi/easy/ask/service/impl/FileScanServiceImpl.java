@@ -78,6 +78,8 @@ public class FileScanServiceImpl implements FileScanService, ApplicationRunner {
     }
 
     private void scanDelete() {
+        String basePath = System.getProperty("basePath");
+
         List<FileEntity> allDocs = SimpleQuery.list(Map.of(), FileEntity.class);
         if (allDocs == null || allDocs.isEmpty()) {
             return;
@@ -85,7 +87,7 @@ public class FileScanServiceImpl implements FileScanService, ApplicationRunner {
 
         for (FileEntity doc : allDocs) {
             File file = new File(doc.getPath());
-            if (!file.exists()) {
+            if (!file.exists() || !file.getAbsolutePath().contains(basePath)) {
                 BaseMapper<FileEntity> mapper = MybatisMappers.getMapper(FileEntity.class);
                 mapper.deleteByMap(Map.of("path", doc.getPath()));
                 log.debug("Deleted non-existent document record: {}, path: {}", doc.getName(), doc.getPath());

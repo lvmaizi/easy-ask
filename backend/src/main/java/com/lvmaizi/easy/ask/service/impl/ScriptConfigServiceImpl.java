@@ -73,7 +73,8 @@ public class ScriptConfigServiceImpl implements ScriptConfigService {
                     path TEXT,
                     name TEXT,
                     last_modified INTEGER,
-                    length INTEGER
+                    length INTEGER,
+                    summary TEXT
                 )
                 """;
         this.jdbcTemplate.execute(createDocTable);
