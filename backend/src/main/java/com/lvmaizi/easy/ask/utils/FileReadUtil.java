@@ -41,6 +41,7 @@ public class FileReadUtil {
             }
         }
 
-        throw new RuntimeException("无法读取文件：" + filePath + "，所有编码尝试均失败");
+        log.warn("Failed to read file: {}", filePath);
+        return "";
     }
 }

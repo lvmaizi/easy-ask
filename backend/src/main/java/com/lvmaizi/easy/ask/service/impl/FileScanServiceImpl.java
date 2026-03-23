@@ -33,6 +33,9 @@ public class FileScanServiceImpl implements FileScanService, ApplicationRunner {
     @Scheduled(fixedRate = 300000)
     public synchronized void scan() {
         doScan();
+        BaseMapper<FileEntity> mapper = MybatisMappers.getMapper(FileEntity.class);
+        Long count = mapper.selectCount(null);
+        log.info("File scan completed, total: {}", count);
     }
 
     @Override
@@ -74,7 +77,6 @@ public class FileScanServiceImpl implements FileScanService, ApplicationRunner {
 
         scanInsert(baseDir);
         scanDelete();
-        log.info("File scan completed");
     }
 
     private void scanDelete() {

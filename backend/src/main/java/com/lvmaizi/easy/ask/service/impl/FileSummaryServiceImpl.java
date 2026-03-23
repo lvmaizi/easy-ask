@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lvmaizi.easy.ask.agent.AgentFactory;
 import com.lvmaizi.easy.ask.agent.SummaryAgent;
-import com.lvmaizi.easy.ask.agent.tools.GetContent;
+import com.lvmaizi.easy.ask.agent.tools.ReadFileChunk;
 import com.lvmaizi.easy.ask.repository.MybatisMappers;
 import com.lvmaizi.easy.ask.repository.SimpleUpdate;
 import com.lvmaizi.easy.ask.repository.entity.FileEntity;
@@ -25,7 +25,7 @@ public class FileSummaryServiceImpl implements FileSummaryService {
     private AgentFactory agentFactory;
 
     @Resource
-    private GetContent getContent;
+    private ReadFileChunk readFileChunk;
 
     @Override
     @Scheduled(fixedRate = 300000)
@@ -46,7 +46,7 @@ public class FileSummaryServiceImpl implements FileSummaryService {
         List<FileEntity> list = mapper.selectList(queryWrapper);
         for (FileEntity fileEntity : list) {
             log.info("fileEntity: {}", fileEntity);
-            String content = getContent.run(fileEntity.getPath());
+            String content = readFileChunk.run(fileEntity.getPath(), 1);
             String summary = summaryAgent.run(content);
             fileEntity.setSummary(summary);
             SimpleUpdate.update(Map.of("path",  fileEntity.getPath()), fileEntity);

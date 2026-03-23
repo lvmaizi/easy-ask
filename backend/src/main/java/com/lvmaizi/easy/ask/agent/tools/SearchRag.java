@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class GetRag {
+public class SearchRag {
 
     @Autowired
     private VectorMapper vectorMapper;
@@ -34,10 +34,11 @@ public class GetRag {
     private static final String Skill =
             """
             
-            ## 检索到该问题的常见问答如下:
+            ## 检索到该问题的常见问答如下（本Rag库若未检索到请立即使用其他工具完成任务）:
             
             {content}
             
+           
             """;
 
     @Autowired

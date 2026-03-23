@@ -12,12 +12,12 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class GetContent {
+public class ReadFileChunk {
 
     private static final String Skill =
             """
             
-            ## 文件内容如下
+            ## 文件内容如下, 页码（块）:{page}
             {file_content}
             
             """;
@@ -25,16 +25,27 @@ public class GetContent {
     @Autowired
     private List<Reader> readerList;
 
-    public GetContent(List<Reader> readerList) {
+    public ReadFileChunk(List<Reader> readerList) {
         this.readerList = readerList;
     }
 
-    public String run(String path) {
+    public String run(String path, int page) {
         for (Reader reader : readerList) {
             if (reader.support(path)) {
                 PromptTemplate promptTemplate = new PromptTemplate(Skill);
                 Map<String, Object> model = new HashMap<>();
-                model.put("file_content", reader.read(path));
+                String content = reader.read(path);
+
+                int startIndex = (page - 1) * 1500;
+                int endIndex = Math.min(startIndex + 1500, content.length());
+
+                String pageContent = "";
+                if (startIndex < content.length()) {
+                    pageContent = content.substring(startIndex, endIndex);
+                }
+
+                model.put("file_content", pageContent);
+                model.put("page", page);
                 return promptTemplate.render(model);
             }
         }

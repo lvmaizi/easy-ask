@@ -33,7 +33,7 @@ public class ListFiles {
         BaseMapper<FileEntity> mapper = MybatisMappers.getMapper(FileEntity.class);
 
         QueryWrapper<FileEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.last("limit " + (page - 1) * 10 + ", 100");
+        queryWrapper.last("limit " + (page - 1) * 100 + ", 100");
         List<FileEntity> list = mapper.selectList(queryWrapper);
         return renderWithPromptTemplate(page, list);
     }

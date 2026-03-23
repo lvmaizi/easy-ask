@@ -45,6 +45,7 @@ public class AskAgent {
     public String run(String question) {
         // 1. 初始化对话历史
         messages.add(new UserMessage(question));
+        List<String> toolHistory = new ArrayList<>();
 
         // 2. ReAct 循环
         for (int iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
@@ -56,7 +57,7 @@ public class AskAgent {
                 if (hasToolCalls(assistantMessage)) {
                     messages.add(assistantMessage);
                     // 执行工具调用
-                    String toolResult = executeTools(assistantMessage);
+                    String toolResult = executeTools(assistantMessage, toolHistory);
 
                     // 将工具结果添加到对话历史
                     var toolCall = getToolCall(assistantMessage);
@@ -150,7 +151,7 @@ public class AskAgent {
      */
     private AssistantMessage.ToolCall getToolCall(AssistantMessage message) {
         if (hasToolCalls(message)) {
-            return message.getToolCalls().get(0);
+            return message.getToolCalls().getFirst();
         }
         return null;
     }
@@ -158,14 +159,18 @@ public class AskAgent {
     /**
      * Act & Observe 阶段 - 执行工具并观察结果
      */
-    private String executeTools(AssistantMessage message) throws Exception {
+    private String executeTools(AssistantMessage message, List<String> toolHistory) throws Exception {
         var toolCall = getToolCall(message);
 
         // 查找并执行匹配的工具
         for (ToolCallback tool : tools) {
+            assert toolCall != null;
             if (tool.getToolDefinition().name().equals(toolCall.name())) {
                 Object result = tool.call(toolCall.arguments());
-                sseEmitter.send("> 正在调用工具【%s】".formatted(AskTools.getName(toolCall.name())) + "...[@][@]");
+                if (toolHistory.isEmpty() || !toolHistory.getLast().equals(toolCall.name())) {
+                    sseEmitter.send("> 正在【%s】".formatted(AskTools.getName(toolCall.name())) + "...[@][@]");
+                }
+                toolHistory.add(toolCall.name());
                 return result.toString();
             }
         }
