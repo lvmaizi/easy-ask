@@ -2,7 +2,7 @@ package com.lvmaizi.easy.ask.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lvmaizi.easy.ask.agent.AgentFactory;
+import com.lvmaizi.easy.ask.agent.factory.AgentFactory;
 import com.lvmaizi.easy.ask.agent.SummaryAgent;
 import com.lvmaizi.easy.ask.agent.tools.ReadFileChunk;
 import com.lvmaizi.easy.ask.repository.MybatisMappers;
@@ -22,9 +22,6 @@ import java.util.Map;
 public class FileSummaryServiceImpl implements FileSummaryService {
 
     @Resource
-    private AgentFactory agentFactory;
-
-    @Resource
     private ReadFileChunk readFileChunk;
 
     @Override
@@ -36,7 +33,7 @@ public class FileSummaryServiceImpl implements FileSummaryService {
 
     public void doRun() {
 
-        SummaryAgent summaryAgent = agentFactory.getSummaryAgent();
+        SummaryAgent summaryAgent = AgentFactory.getSummaryAgent();
 
         BaseMapper<FileEntity> mapper = MybatisMappers.getMapper(FileEntity.class);
         QueryWrapper<FileEntity> queryWrapper = new QueryWrapper<>();
@@ -45,7 +42,6 @@ public class FileSummaryServiceImpl implements FileSummaryService {
 
         List<FileEntity> list = mapper.selectList(queryWrapper);
         for (FileEntity fileEntity : list) {
-            log.info("fileEntity: {}", fileEntity);
             String content = readFileChunk.run(fileEntity.getPath(), 1);
             String summary = summaryAgent.run(content);
             fileEntity.setSummary(summary);

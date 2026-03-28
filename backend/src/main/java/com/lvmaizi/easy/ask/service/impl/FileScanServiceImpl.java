@@ -57,7 +57,9 @@ public class FileScanServiceImpl implements FileScanService, ApplicationRunner {
         Long count = mapper.selectCount(null);
 
         List<FileEntity> top = mapper.selectList(new QueryWrapper<FileEntity>().orderByAsc("last_modified").last("limit 100"));
-        String top10 = top.stream().map(FileEntity::getPath).collect(Collectors.joining("\n"));
+        String top10 = top.stream().map(
+                doc -> doc.getPath() + "\n" + doc.getSummary()
+        ).collect(Collectors.joining("\n"));
 
         return result.formatted(count, top10);
     }

@@ -21,11 +21,9 @@ public class ListFiles {
     private static final String Skill =
             """
             
-            ## 获取的文件列表如下（页码：{page}），
+            ## 获取的文件列表如下（当前页码：{page}，你可累加页码继续查询后续文件，直到查询返回为空），
             
             {file_list}
-            
-            你可累加页码继续查询后续文件，知道查询返回为空
             
             """;
     public String run(int page) {

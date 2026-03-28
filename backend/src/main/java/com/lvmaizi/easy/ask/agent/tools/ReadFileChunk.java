@@ -17,7 +17,7 @@ public class ReadFileChunk {
     private static final String Skill =
             """
             
-            ## 文件内容如下, 页码（块）:{page}
+            ## 文件内容如下, 当前页码:{page}
             {file_content}
             
             """;
@@ -36,12 +36,14 @@ public class ReadFileChunk {
                 Map<String, Object> model = new HashMap<>();
                 String content = reader.read(path);
 
-                int startIndex = (page - 1) * 1500;
-                int endIndex = Math.min(startIndex + 1500, content.length());
+                int startIndex = (page - 1) * 5000;
+                int endIndex = Math.min(startIndex + 5000, content.length());
 
                 String pageContent = "";
                 if (startIndex < content.length()) {
                     pageContent = content.substring(startIndex, endIndex);
+                } else {
+                    return  "文件已结束";
                 }
 
                 model.put("file_content", pageContent);

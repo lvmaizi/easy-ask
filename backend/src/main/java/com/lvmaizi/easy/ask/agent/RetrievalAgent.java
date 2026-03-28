@@ -2,12 +2,9 @@ package com.lvmaizi.easy.ask.agent;
 
 import com.lvmaizi.easy.ask.agent.compress.Masking;
 import com.lvmaizi.easy.ask.agent.compress.Summarization;
-import com.lvmaizi.easy.ask.agent.tools.AskTools;
 import com.lvmaizi.easy.ask.utils.MessagesLog;
 import lombok.Getter;
-import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -17,43 +14,37 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.tool.ToolCallback;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AskAgent {
-
-    private static final Logger log = LoggerFactory.getLogger(AskAgent.class);
+@Slf4j
+public class RetrievalAgent {
 
     // 最大迭代次数
-    private static final int MAX_ITERATIONS = 20;
+    private static final int MAX_ITERATIONS = 1000;
 
     private final ChatClient chatClient;
     private final List<ToolCallback> tools;
     @Getter
     private final List<Message> messages = new ArrayList<>();
 
-    public AskAgent(ChatClient chatClient, List<ToolCallback> tools) {
+    public RetrievalAgent(ChatClient chatClient, List<ToolCallback> tools) {
         this.chatClient = chatClient;
         this.tools = tools != null ? tools : new ArrayList<>();
     }
 
-    @Setter
-    private SseEmitter sseEmitter;
 
     public String run(String question) {
-        Masking.mask(messages, 0);
-        Summarization.summarize(messages, 1);
+        // 1. 初始化对话历史
         messages.add(new UserMessage(question));
-        List<String> toolHistory = new ArrayList<>();
 
-        // 循环
+        // 2. ReAct 循环
         for (int iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
-
+            Masking.mask(messages, 5);
+            Summarization.summarize(messages, 100);
             try {
                 AssistantMessage assistantMessage = thinkStreaming();
 
@@ -61,7 +52,7 @@ public class AskAgent {
                 if (hasToolCalls(assistantMessage)) {
                     messages.add(assistantMessage);
                     // 执行工具调用
-                    String toolResult = executeTools(assistantMessage, toolHistory);
+                    String toolResult = executeTools(assistantMessage);
 
                     // 将工具结果添加到对话历史
                     var toolCall = getToolCall(assistantMessage);
@@ -73,6 +64,7 @@ public class AskAgent {
                 } else {
                     // 没有工具调用，说明大模型已给出最终答案
                     messages.add(assistantMessage);
+                    log.info("\n\nquestion: {}", question);
                     log.info("\n\nfinal answer：{}", assistantMessage.getText());
                     break;
                 }
@@ -81,12 +73,8 @@ public class AskAgent {
                 log.warn("error:", e);
                 break;
             }
-            if (iteration == MAX_ITERATIONS) {
-                log.warn("Max iterations reached. Exiting.");
-            }
         }
         // 关闭连接
-        sseEmitter.complete();
         MessagesLog.log(messages);
         return messages.getLast().getText();
     }
@@ -118,18 +106,12 @@ public class AskAgent {
                 String text = output.getText();
                 if (text != null && !text.isEmpty()) {
                     fullText.append(text);
-                    String sanitizedResponse = text.replace("\n", "[@]").replace("\r", "@|@");
-                    try {
-                        sseEmitter.send(SseEmitter.event().data(sanitizedResponse));
-                    } catch (IOException e) {
-                        log.warn("Error sending message: " + e.getMessage());
-                    }
                 }
 
                 // 保存最后一个消息
                 lastMessage.set(output);
             } else {
-                  log.warn("No response from OpenAI");
+                log.warn("No response from OpenAI");
             }
         }).blockLast();
 
@@ -167,7 +149,7 @@ public class AskAgent {
     /**
      * Act & Observe 阶段 - 执行工具并观察结果
      */
-    private String executeTools(AssistantMessage message, List<String> toolHistory) throws Exception {
+    private String executeTools(AssistantMessage message) throws Exception {
         var toolCall = getToolCall(message);
 
         // 查找并执行匹配的工具
@@ -175,14 +157,11 @@ public class AskAgent {
             assert toolCall != null;
             if (tool.getToolDefinition().name().equals(toolCall.name())) {
                 Object result = tool.call(toolCall.arguments());
-                if (toolHistory.isEmpty() || !toolHistory.getLast().equals(toolCall.name())) {
-                    sseEmitter.send("> 正在【%s】".formatted(AskTools.getName(toolCall.name())) + "...[@][@]");
-                }
-                toolHistory.add(toolCall.name());
                 return result.toString();
             }
         }
 
         throw new RuntimeException("未找到工具：" + toolCall.name());
     }
+
 }

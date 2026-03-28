@@ -1,6 +1,6 @@
 package com.lvmaizi.easy.ask.service.impl;
 
-import com.lvmaizi.easy.ask.agent.AgentFactory;
+import com.lvmaizi.easy.ask.agent.factory.AgentFactory;
 import com.lvmaizi.easy.ask.service.AgentClearService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

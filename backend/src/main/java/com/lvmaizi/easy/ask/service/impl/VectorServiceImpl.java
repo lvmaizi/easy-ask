@@ -35,8 +35,15 @@ public class VectorServiceImpl implements VectorService {
 
         List<VectorEntity> top = mapper.selectList(new QueryWrapper<VectorEntity>().select("query", "content").orderByDesc("priority")
                 .last("limit 10"));
-        String top10 = top.stream().map(e -> e.getQuery() + " : " + e.getContent()).collect(Collectors.joining("\n"));
 
-        return result.formatted(count, top10);
+        StringBuilder top10 = new StringBuilder();
+
+        for (int i = 0; i < top.size(); i++) {
+            VectorEntity e = top.get(i);
+            top10.append("======== ").append(i + 1).append(". ").append(e.getQuery()).append("\n") ;
+            top10.append(">>>>>>>>").append(e.getContent()).append("\n\n") ;
+        }
+
+        return result.formatted(count, top10.toString());
     }
 }

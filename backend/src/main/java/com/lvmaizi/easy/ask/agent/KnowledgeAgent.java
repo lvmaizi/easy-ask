@@ -9,6 +9,8 @@ import com.lvmaizi.easy.ask.utils.BytesUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.MessageType;
+import org.springframework.ai.chat.messages.ToolResponseMessage;
 import org.springframework.ai.embedding.Embedding;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingRequest;
@@ -16,12 +18,13 @@ import org.springframework.ai.embedding.EmbeddingRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ExtractionAgent {
+
+public class KnowledgeAgent {
 
     private final ChatClient chatClient;
     private final EmbeddingModel embeddingModel;
 
-    public ExtractionAgent(ChatClient chatClient, EmbeddingModel embeddingModel) {
+    public KnowledgeAgent(ChatClient chatClient, EmbeddingModel embeddingModel) {
         this.chatClient = chatClient;
         this.embeddingModel = embeddingModel;
     }
@@ -32,7 +35,26 @@ public class ExtractionAgent {
         }
 
         String content = messages.stream().map(
-                message -> message.getMessageType().name() + " : " + message.getText())
+                message -> {
+                    switch (message.getMessageType()) {
+                        case MessageType.USER -> {
+                            return  "用户：" + message.getText();
+                        }
+                        case MessageType.ASSISTANT -> {
+                            return  "助手：" + message.getText();
+                        }
+                        case MessageType.SYSTEM -> {
+                            return  "系统：" + message.getText();
+                        }
+                        case MessageType.TOOL -> {
+                            if (message instanceof ToolResponseMessage toolResponseMessage) {
+                                return  "工具：" + toolResponseMessage.getResponses().getLast().responseData();
+                            }
+                            return "工具：" + message.getText();
+                        }
+                    };
+                    return "";
+                })
                 .collect(Collectors.joining("\n"));
 
         String userPrompt = """
