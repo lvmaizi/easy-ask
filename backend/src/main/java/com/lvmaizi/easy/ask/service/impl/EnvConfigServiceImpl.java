@@ -18,34 +18,32 @@ public class EnvConfigServiceImpl implements EnvConfigService {
     }
 
     private void initBasePath() {
-        String basePath = null;
-
-        try {
-            Properties props = PropertiesLoaderUtils.loadProperties(
-                    new ClassPathResource("application.properties")
-            );
-            basePath = props.getProperty("base.path");
-            if (basePath != null && !basePath.trim().isEmpty()) {
-                log.info("Loaded basePath from application.properties: {}", basePath);
-            }
-        } catch (IOException e) {
-            log.info("Failed to load application.properties");
-        }
+        String basePath = System.getProperty("base.path");
 
         if (basePath == null || basePath.trim().isEmpty()) {
-            basePath = System.getProperty("basePath");
+            try {
+                Properties props = PropertiesLoaderUtils.loadProperties(
+                        new ClassPathResource("application.properties")
+                );
+                basePath = props.getProperty("base.path");
+                if (basePath != null && !basePath.trim().isEmpty()) {
+                    log.info("Loaded basePath from application.properties: {}", basePath);
+                }
+            } catch (IOException e) {
+                log.info("Failed to load application.properties");
+            }
         }
 
         if (basePath == null || basePath.trim().isEmpty()) {
             basePath = System.getProperty("user.dir");
-            System.setProperty("basePath", basePath);
+            System.setProperty("base.path", basePath);
         }
         log.info("App base path：{}", basePath);
     }
 
 
     private void initEasyAskPath() {
-        String path = System.getProperty("basePath");
+        String path = System.getProperty("base.path");
         File baseDir = new File(path);
 
         // 检查并创建基础路径目录
@@ -67,7 +65,7 @@ public class EnvConfigServiceImpl implements EnvConfigService {
     }
 
     private void initDatabase() {
-        String path = System.getProperty("basePath");
+        String path = System.getProperty("base.path");
 
         // 构建数据库文件路径
         String dbPath = new File(new File(path, ".easy-ask"), "easy-ask.db").getAbsolutePath();
