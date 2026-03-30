@@ -28,7 +28,7 @@ public class Summarization {
         if (currentRound > 0) {
             List<Message> history = messages.subList(0, currentRound);
             String summary = summarizeText(history);
-            List<Message> currentRoundMessages = messages.subList(currentRound - 1, messages.size());
+            List<Message> currentRoundMessages = messages.subList(currentRound, messages.size());
             currentRoundMessages.set(0, new UserMessage("""
                     历史会话摘要：%s
                     

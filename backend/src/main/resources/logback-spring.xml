@@ -61,4 +61,14 @@
         <appender-ref ref="CONSOLE" />
     </logger>
 
+    <!-- PDFBox 字体映射警告屏蔽 -->
+    <logger name="org.apache.pdfbox" additivity="false">
+        <level value="ERROR"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+    <logger name="org.apache.fontbox" additivity="false">
+        <level value="ERROR"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
 </configuration>

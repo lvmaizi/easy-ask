@@ -35,7 +35,7 @@ public class AskAgent {
     private final ChatClient chatClient;
     private final List<ToolCallback> tools;
     @Getter
-    private final List<Message> messages = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 
     public AskAgent(ChatClient chatClient, List<ToolCallback> tools) {
         this.chatClient = chatClient;
@@ -47,7 +47,7 @@ public class AskAgent {
 
     public String run(String question) {
         Masking.mask(messages, 0);
-        Summarization.summarize(messages, 1);
+        messages = Summarization.summarize(messages, 1);
         messages.add(new UserMessage(question));
         List<String> toolHistory = new ArrayList<>();
 

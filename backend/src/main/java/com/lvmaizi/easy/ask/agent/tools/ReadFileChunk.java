@@ -6,6 +6,7 @@ import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,11 @@ public class ReadFileChunk {
     }
 
     public String run(String path, int page) {
+        File file = new File(path);
+        if (!file.exists()) {
+            log.warn("File does not exist: {}", path);
+            return "文件不存在";
+        }
         for (Reader reader : readerList) {
             if (reader.support(path)) {
                 PromptTemplate promptTemplate = new PromptTemplate(Skill);

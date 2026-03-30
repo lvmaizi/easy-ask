@@ -2,9 +2,12 @@ package com.lvmaizi.easy.ask.service.impl;
 
 import com.lvmaizi.easy.ask.service.EnvConfigService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 @Slf4j
 public class EnvConfigServiceImpl implements EnvConfigService {
@@ -15,7 +18,24 @@ public class EnvConfigServiceImpl implements EnvConfigService {
     }
 
     private void initBasePath() {
-        String basePath = System.getProperty("basePath");
+        String basePath = null;
+
+        try {
+            Properties props = PropertiesLoaderUtils.loadProperties(
+                    new ClassPathResource("application.properties")
+            );
+            basePath = props.getProperty("base.path");
+            if (basePath != null && !basePath.trim().isEmpty()) {
+                log.info("Loaded basePath from application.properties: {}", basePath);
+            }
+        } catch (IOException e) {
+            log.info("Failed to load application.properties");
+        }
+
+        if (basePath == null || basePath.trim().isEmpty()) {
+            basePath = System.getProperty("basePath");
+        }
+
         if (basePath == null || basePath.trim().isEmpty()) {
             basePath = System.getProperty("user.dir");
             System.setProperty("basePath", basePath);
