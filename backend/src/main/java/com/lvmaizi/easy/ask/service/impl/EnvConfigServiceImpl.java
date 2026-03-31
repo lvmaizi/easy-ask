@@ -11,6 +11,9 @@ import java.util.Properties;
 
 @Slf4j
 public class EnvConfigServiceImpl implements EnvConfigService {
+
+    private final static String BASE_PATH = "base.path";
+
     public  void init()  {
         initBasePath();
         initEasyAskPath();
@@ -18,14 +21,14 @@ public class EnvConfigServiceImpl implements EnvConfigService {
     }
 
     private void initBasePath() {
-        String basePath = System.getProperty("base.path");
+        String basePath = System.getProperty(BASE_PATH);
 
         if (basePath == null || basePath.trim().isEmpty()) {
             try {
                 Properties props = PropertiesLoaderUtils.loadProperties(
                         new ClassPathResource("application.properties")
                 );
-                basePath = props.getProperty("base.path");
+                basePath = props.getProperty(BASE_PATH);
                 if (basePath != null && !basePath.trim().isEmpty()) {
                     log.info("Loaded basePath from application.properties: {}", basePath);
                 }
@@ -36,14 +39,14 @@ public class EnvConfigServiceImpl implements EnvConfigService {
 
         if (basePath == null || basePath.trim().isEmpty()) {
             basePath = System.getProperty("user.dir");
-            System.setProperty("base.path", basePath);
         }
+        System.setProperty(BASE_PATH, basePath);
         log.info("App base path：{}", basePath);
     }
 
 
     private void initEasyAskPath() {
-        String path = System.getProperty("base.path");
+        String path = System.getProperty(BASE_PATH);
         File baseDir = new File(path);
 
         // 检查并创建基础路径目录
@@ -65,7 +68,7 @@ public class EnvConfigServiceImpl implements EnvConfigService {
     }
 
     private void initDatabase() {
-        String path = System.getProperty("base.path");
+        String path = System.getProperty(BASE_PATH);
 
         // 构建数据库文件路径
         String dbPath = new File(new File(path, ".easy-ask"), "easy-ask.db").getAbsolutePath();

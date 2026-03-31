@@ -53,7 +53,7 @@ EasyAsk 架构
 2. 编译项目
 
 ```bash
-  mvn clean package -DskipTests -pl backend
+   mvn clean package -DskipTests -f backend/pom.xml
 ```
 
 3. 配置模型及文件夹路径
@@ -98,6 +98,68 @@ EasyAsk 架构
 
 输入你的问题，Enjoy！
 
+## 客户端试用
+<table style="width: 100%">
+  <tr>
+    <td width="50%" align="center">
+      <b>Windows</b>
+    </td>
+    <td width="50%" align="center">
+      <b>MacOS</b>
+    </td>
+  </tr>
+  <tr style="text-align: center">
+    <td align="center" valign="middle">
+      <a href='https://github.com/lvmaizi/easy-ask/releases/'>
+        <img src='./public/images/windows.png' style="height:24px; width: 24px" />
+        <br />
+      </a>
+    </td>
+    <td align="center" valign="middle">
+      <a href='https://github.com/lvmaizi/easy-ask/releases/'>
+        <img src='./public/images/mac.png' style="height:24px; width: 24px" />
+        <br />
+      </a>
+    </td>
+  </tr>
+</table>
+
+### Windows 客户端
+1. 下载客户端easy-ask.zip 文件并解压
+```declarative
+直接解压文件夹 easy-ask.zip即可
+```
+
+2. 配置模型及文件夹路径
+```declarative
+编辑配置文件 ./app/conf/application.properties 文件配置模型地址
+
+复制文档至 ./app/docs 文件夹
+```
+3. 启动并访问
+
+```declarative
+启动成功后，打开浏览器，访问：👉 http://localhost:8080
+```
+
+### MacOS 客户端
+1. 下载客户端easy-ask.pkg 文件并安装
+```declarative
+打开「系统设置」 (System Settings) -> 「隐私与安全性」 (Privacy & Security) -> 仍要打开
+```
+2. 配置模型及文件夹路径
+```bash
+  sudo vi /Applications/EasyAsk.app/Contents/app/application.properties
+```
+```declarative
+将相关文档移动至${user.home}/easy-ask目录下
+```
+3. 启动并访问
+```declarative
+启动成功后，打开浏览器，访问：👉 http://localhost:8080
+```
+
+## 📚 案例分享
 
 ## 📄 许可证
 

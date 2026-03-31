@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FileScanServiceImpl implements FileScanService, ApplicationRunner {
 
+    private final static String BASE_PATH = "base.path";
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         new Thread(this::scan, "File Scan Task").start();
@@ -65,13 +67,13 @@ public class FileScanServiceImpl implements FileScanService, ApplicationRunner {
     }
 
     private void doScan() {
-        String basePath = System.getProperty("basePath");
+        String basePath = System.getProperty(BASE_PATH);
         if (basePath == null || basePath.trim().isEmpty()) {
             log.warn("doc.base.path not configured, skipping file scan");
             return;
         }
 
-        File baseDir = new File(basePath);
+        File baseDir = new File(basePath).getAbsoluteFile();
         if (!baseDir.exists()) {
             log.warn("Base path does not exist: {}, skipping file scan", basePath);
             return;
@@ -82,7 +84,10 @@ public class FileScanServiceImpl implements FileScanService, ApplicationRunner {
     }
 
     private void scanDelete() {
-        String basePath = System.getProperty("basePath");
+        String basePath = System.getProperty(BASE_PATH);
+
+        File baseDir = new File(basePath).getAbsoluteFile();
+        String absoluteBasePath = baseDir.getAbsolutePath();
 
         List<FileEntity> allDocs = SimpleQuery.list(Map.of(), FileEntity.class);
         if (allDocs == null || allDocs.isEmpty()) {
@@ -91,10 +96,10 @@ public class FileScanServiceImpl implements FileScanService, ApplicationRunner {
 
         for (FileEntity doc : allDocs) {
             File file = new File(doc.getPath());
-            if (!file.exists() || !file.getAbsolutePath().contains(basePath)) {
+            if (!file.exists() || !file.getAbsolutePath().contains(absoluteBasePath)) {
                 BaseMapper<FileEntity> mapper = MybatisMappers.getMapper(FileEntity.class);
                 mapper.deleteByMap(Map.of("path", doc.getPath()));
-                log.debug("Deleted non-existent document record: {}, path: {}", doc.getName(), doc.getPath());
+                log.info("Deleted non-existent document record: {}, path: {}", doc.getName(), doc.getPath());
             }
         }
     }

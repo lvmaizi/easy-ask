@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         new EnvConfigServiceImpl().init();
         SpringApplication.run(Main.class, args);
-        String basePath = System.getProperty("basePath");
+        String basePath = System.getProperty("base.path");
         log.info("App base path：{}", basePath);
     }
 

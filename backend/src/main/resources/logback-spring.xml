@@ -6,7 +6,7 @@
 
     <!-- 定义日志文件 输出位置 -->
     <property name="log_pattern" value="%d [%thread] %-5p [%c] [%F:%L] [trace=%mdc{trace_id},span=%mdc{span_id},parent=%X{X-B3-ParentSpanId:-},tid=] - %.-20480msg%n"/>
-    <property name="log_dir" value="${basePath}/log/"/>
+    <property name="log_dir" value="${base.path}/log/"/>
 
 
     <!-- 日志最大的历史 30天 -->
